@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.group1.projectmanagementapi.exception.ResourceNotFoundException;
-import com.group1.projectmanagementapi.project.ProjectService;
 import com.group1.projectmanagementapi.project.models.Project;
 import com.group1.projectmanagementapi.status.StatusRepository;
 import com.group1.projectmanagementapi.status.StatusService;
