@@ -1,6 +1,7 @@
 package com.group1.projectmanagementapi.project;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,8 @@ import com.group1.projectmanagementapi.customer.models.Customer;
 import com.group1.projectmanagementapi.exception.MissingServletRequestParameterException;
 import com.group1.projectmanagementapi.exception.ResourceNotFoundException;
 import com.group1.projectmanagementapi.project.models.Project;
+import com.group1.projectmanagementapi.status.models.Status;
+import com.group1.projectmanagementapi.task.models.Task;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,18 +29,41 @@ public class ProjectService {
         return this.projectRepository.save(project);
     }
 
+    public List<Project> getAllProjects() {
+        return this.projectRepository.findAll();
+    }
+
+    // public Project updateOne(Long id, Project project, Customer customer) {
+    //     Project existingProject = this.findOneById(id);
+
+    //     if (existingProject.getProjectMembers().contains(customer)) {
+    //         throw new MissingServletRequestParameterException("User already in this project");
+    //     }
+
+    //     existingProject.setTitle(project.getTitle());
+
+    //     customer.getProjects().add(existingProject);
+    //     existingProject.getProjectMembers().add(customer);
+
+    //     return this.projectRepository.save(existingProject);
+    // }
+
     public Project updateOne(Long id, Project project, Customer customer) {
         Project existingProject = this.findOneById(id);
-
+    
         if (existingProject.getProjectMembers().contains(customer)) {
             throw new MissingServletRequestParameterException("User already in this project");
         }
-
-        existingProject.setTitle(project.getTitle());
-
-        customer.getProjects().add(existingProject);
-        existingProject.getProjectMembers().add(customer);
-
+    
+        if (project.getTitle() != null) {
+            existingProject.setTitle(project.getTitle());
+        }
+    
+        if (customer != null) {
+            customer.getProjects().add(existingProject);
+            existingProject.getProjectMembers().add(customer);
+        }
+    
         return this.projectRepository.save(existingProject);
     }
 
@@ -53,4 +79,20 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
+    public List<Task> getAllTasks(Project project, Optional<String> status) {
+        List<Task> taskLists = project.getTasks();
+
+        if (status.isPresent() && !taskLists.isEmpty()) {
+            List<Task> taskFiltered = taskLists.stream()
+                    .filter(task -> task.getStatus().getStatus().equals(status.get().toUpperCase())).toList();
+
+            return taskFiltered;
+        }
+        
+        return taskLists;
+    }
+
+    public List<String> getProjectStatus(Long id) {
+        return this.projectRepository.getAllProjectStatus(id);
+    }
 }

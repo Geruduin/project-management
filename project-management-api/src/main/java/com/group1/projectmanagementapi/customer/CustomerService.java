@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,8 @@ public class CustomerService {
     private final ProjectRepository projectRepository;
 
     public Customer findOneById(Long id) {
-        return this.customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found customer with id = " + id));
+        return this.customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found customer with id = " + id));
     }
 
     public Customer save(Customer customer) {
@@ -40,12 +42,17 @@ public class CustomerService {
         return this.customerRepository.save(customer);
     }
 
+    public List<Customer> getAllCustomers() {
+        return this.customerRepository.findAll();
+    }
+
     public Customer updateOne(Customer customer) {
         Customer existingCustomer = this.findOneById(customer.getId());
 
         Optional.ofNullable(customer.getName()).ifPresent(existingCustomer::setName);
         Optional.ofNullable(customer.getUsername()).ifPresent(existingCustomer::setUsername);
         Optional.ofNullable(customer.getEmail()).ifPresent(existingCustomer::setEmail);
+        Optional.ofNullable(customer.getImageUrl()).ifPresent(existingCustomer::setImageUrl);
 
         ApplicationUser applicationUser = existingCustomer.getApplicationUser();
         if (applicationUser != null) {

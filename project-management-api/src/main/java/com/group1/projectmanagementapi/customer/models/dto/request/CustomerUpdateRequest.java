@@ -17,13 +17,15 @@ public class CustomerUpdateRequest {
     private String name;
     private String username;
     private String email;
-    
+    private String imageUrl;
+
     public Customer convertToEntity() {
         return Customer.builder()
                 .id(this.id)
                 .name(this.name)
                 .username(this.username)
                 .email(this.email)
+                .imageUrl(this.imageUrl)
                 .build();
     }
 
