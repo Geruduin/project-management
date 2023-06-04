@@ -34,7 +34,6 @@ public class ControllerExceptionHandler {
     return new ResponseEntity<ErrorMessage>(message, HttpStatus.BAD_REQUEST);
   }  
 
-
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ErrorMessage> forbiddenExceptioResponseEntity(AccessDeniedException ex, WebRequest request) {
     ErrorMessage message = new ErrorMessage(
